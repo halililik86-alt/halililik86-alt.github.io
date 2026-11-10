@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>relay</title>
+<script>
+// Sends the listed store images to the window that opened this page (Speaking Train store setup).
+const files = new URLSearchParams(location.search).get('f').split(',');
+(async () => {
+  const out = [];
+  for (const f of files) { const r = await fetch(f); out.push({ name: f.split('/').join('-'), type: r.headers.get('content-type'), buf: await r.arrayBuffer() }); }
+  window.opener.postMessage({ relay: out }, '*', out.map(o => o.buf));
+  document.body.textContent = 'sent ' + out.length;
+})();
+</script>
